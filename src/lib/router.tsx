@@ -1,9 +1,9 @@
 import { createBrowserRouter, redirect } from "react-router-dom";
-import Root from "./routes/root";
-import Home from "./routes/home";
-import SignInForm from "./routes/SignInForm";
-import SignUpForm from "./routes/SignUpForm";
-import AuthLayout from "./layout/AuthLayout";
+import Root from "../routes/root";
+import Home from "../routes/home";
+import SignInForm from "../routes/SignInForm";
+import SignUpForm from "../routes/SignUpForm";
+import AuthLayout from "../layout/AuthLayout";
 
 export const router = createBrowserRouter([
   {
