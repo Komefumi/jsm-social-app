@@ -1,5 +1,9 @@
 import { Outlet } from "react-router-dom";
 
 export default function Root() {
-  return <Outlet />;
+  return (
+    <div className="flex h-screen">
+      <Outlet />
+    </div>
+  );
 }
