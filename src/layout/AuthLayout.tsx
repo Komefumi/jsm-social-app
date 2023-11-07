@@ -1,3 +1,12 @@
+import { Outlet } from "react-router-dom";
+
 export default () => {
-  <div>Auth Layout</div>;
+  return (
+    <div>
+      <h2>Auth Layout</h2>
+      <div>
+        <Outlet />
+      </div>
+    </div>
+  );
 };
