@@ -1,3 +1,3 @@
 export default () => {
-  <div>Root Layout</div>;
+  return <div>Root Layout</div>;
 };
