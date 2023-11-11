@@ -63,6 +63,9 @@ export default () => {
     // ✅ This will be type-safe and validated.
     console.log(values);
     const newUser = await createUserAccount(values);
+    if (!newUser) {
+      return;
+    }
     console.log({ newUser });
   }
 
