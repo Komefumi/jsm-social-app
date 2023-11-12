@@ -1,6 +1,7 @@
 import * as z from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { Link, useNavigate } from "react-router-dom";
 
 import {
   Form,
@@ -15,8 +16,15 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { signupValidation } from "@/lib/validation";
 import Loader from "@/components/shared/Loader";
-import { Link } from "react-router-dom";
-import { createUserAccount } from "@/lib/appwrite/api";
+import { useToast } from "@/components/ui/use-toast";
+import {
+  useCreateUserAccount,
+  useUserSignIn,
+} from "@/lib/react-query/queries-and-mutations";
+// import { useUserContext } from "@/lib/context/AuthContext";
+import { Toaster } from "@/components/ui/toaster";
+// import { deleteUser } from "@/lib/appwrite/api";
+import { useAuthStore } from "@/lib/state";
 
 type Type__SignupValidation = z.infer<typeof signupValidation>;
 
@@ -45,7 +53,14 @@ const passwordFieldNames: (keyof Type__SignupValidation)[] = [
 ];
 
 export default () => {
-  const isLoading = false;
+  const navigate = useNavigate();
+  const { toast } = useToast();
+
+  const { mutateAsync: createUserAccount, isPending: isCreatingUser } =
+    useCreateUserAccount();
+  const { mutateAsync: signInAccount } = useUserSignIn();
+  const { checkAuthUser } = useAuthStore();
+  console.log({ checkAuthUser: checkAuthUser.toString() });
 
   const form = useForm<z.infer<typeof signupValidation>>({
     resolver: zodResolver(signupValidation),
@@ -54,19 +69,58 @@ export default () => {
       username: "",
       email: "",
       password: "",
+      passwordConfirmation: "",
     },
   });
 
   // 2. Define a submit handler.
   async function onSubmit(values: z.infer<typeof signupValidation>) {
+    const authResult = await checkAuthUser();
+    console.log({ authResult });
     // Do something with the form values.
     // ✅ This will be type-safe and validated.
     console.log(values);
     const newUser = await createUserAccount(values);
     if (!newUser) {
+      toast({
+        title: "User Registration Failed",
+        description: "For some reason creation of user account failed",
+        variant: "destructive",
+      });
       return;
     }
-    console.log({ newUser });
+
+    const session = await signInAccount({
+      email: values.email,
+      password: values.password,
+    });
+
+    if (!session) {
+      console.log("no session");
+      toast({
+        title: "Sign In Failed",
+        description: "Please try to log in with your new credentials",
+        // variant: "destructive",
+      });
+    }
+
+    console.log(JSON.stringify(checkAuthUser, null, 2));
+    const isLoggedIn = await checkAuthUser();
+    console.log({ isLoggedIn });
+    if (isLoggedIn) {
+      form.reset();
+      console.log("navigating from SignUpForm");
+      navigate("/");
+    } else {
+      console.log("failed check auth");
+      // await deleteUser(newUser.$id);
+      toast({
+        title: "Sign In Failed",
+        description: "Please try to log in with your new credentials",
+        // variant: "destructive",
+      });
+    }
+    // console.log({ newUser });
   }
 
   return (
@@ -88,6 +142,7 @@ export default () => {
             const [label, desc] = fieldToData[fieldName];
             return (
               <FormField
+                key={fieldName}
                 control={form.control}
                 name={fieldName}
                 render={({ field }) => (
@@ -115,7 +170,7 @@ export default () => {
           })}
 
           <Button className="shad-button__primary" type="submit">
-            {isLoading ? (
+            {isCreatingUser ? (
               <div className="flex-center gap-2">
                 <Loader />
               </div>
@@ -134,6 +189,7 @@ export default () => {
           </p>
         </form>
       </div>
+      <Toaster />
     </Form>
   );
 };

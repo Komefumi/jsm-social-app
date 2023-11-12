@@ -1,3 +1,24 @@
+import React from "react";
+import { Models } from "appwrite";
+
+export type IAuthContext = {
+  user: IUser;
+  isLoading: boolean;
+  setUser: (user: IUser) => void;
+  isAuthenticated: boolean;
+  setIsAuthenticated: (value: boolean) => void;
+  checkAuthUser: () => Promise<boolean>;
+};
+
+export type IContextType = {
+  user: IUser;
+  isLoading: boolean;
+  setUser: React.Dispatch<React.SetStateAction<IUser>>;
+  isAuthenticated: boolean;
+  setIsAuthenticated: React.Dispatch<React.SetStateAction<boolean>>;
+  checkAuthUser: () => Promise<boolean>;
+};
+
 export type INavLink = {
   imgURL: string;
   route: string;
@@ -39,6 +60,8 @@ export type IUser = {
   imageURL: string;
   bio: string;
 };
+
+export interface IUserDocument extends Models.Document, IUser {}
 
 export type INewUser = {
   name: string;
