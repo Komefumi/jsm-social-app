@@ -20,3 +20,8 @@ export const signupValidation = z
       });
     }
   });
+
+export const signinValidation = z.object({
+  email: z.string().email(),
+  password: z.string(),
+});

@@ -21,9 +21,6 @@ import {
   useCreateUserAccount,
   useUserSignIn,
 } from "@/lib/react-query/queries-and-mutations";
-// import { useUserContext } from "@/lib/context/AuthContext";
-import { Toaster } from "@/components/ui/toaster";
-// import { deleteUser } from "@/lib/appwrite/api";
 import { useAuthStore } from "@/lib/state";
 
 type Type__SignupValidation = z.infer<typeof signupValidation>;
@@ -189,7 +186,6 @@ export default () => {
           </p>
         </form>
       </div>
-      <Toaster />
     </Form>
   );
 };
