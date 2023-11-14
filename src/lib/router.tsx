@@ -1,9 +1,37 @@
-import { createBrowserRouter, redirect } from "react-router-dom";
+import {
+  createBrowserRouter,
+  redirect,
+  NonIndexRouteObject,
+} from "react-router-dom";
 import Root from "../routes/root";
 import Home from "../routes/home";
 import SignInForm from "../routes/SignInForm";
 import SignUpForm from "../routes/SignUpForm";
 import AuthLayout from "../layout/AuthLayout";
+import RootLayout from "@/layout/RootLayout";
+import Explore from "@/routes/Explore";
+import Saved from "@/routes/Saved";
+import AllUsers from "@/routes/AllUsers";
+import CreatePost from "@/routes/CreatePost";
+import EditPost from "@/routes/EditPost";
+import PostDetails from "@/routes/PostDetails";
+import Profile from "@/routes/Profile";
+import UpdateProfile from "@/routes/UpdateProfile";
+import LikedPosts from "@/routes/LikedPosts";
+
+const simpleRootConfigList: NonIndexRouteObject[] = [
+  ["/explore", <Explore />],
+  ["/saved", <Saved />],
+  ["/all-users", <AllUsers />],
+  ["/create-post", <CreatePost />],
+  ["/update-post/:id", <EditPost />],
+  ["/posts/:id", <PostDetails />],
+  ["/profile/:id/*", <Profile />],
+  ["/update-profile/:id", <UpdateProfile />],
+  ["/liked-posts", <LikedPosts />],
+].map(([path, element]) => {
+  return { path, element } as NonIndexRouteObject;
+});
 
 export const router = createBrowserRouter([
   {
@@ -11,8 +39,15 @@ export const router = createBrowserRouter([
     element: <Root />,
     children: [
       {
-        index: true,
-        element: <Home />,
+        path: "",
+        element: <RootLayout />,
+        children: [
+          {
+            index: true,
+            element: <Home />,
+          },
+          ...simpleRootConfigList,
+        ],
       },
     ],
   },

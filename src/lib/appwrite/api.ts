@@ -100,3 +100,12 @@ export async function getCurrentUser() {
     throw error;
   }
 }
+
+export async function signOutAccount() {
+  try {
+    const emailSession = await account.deleteSession("current");
+    return emailSession;
+  } catch (error) {
+    console.error(error);
+  }
+}
