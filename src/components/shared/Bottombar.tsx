@@ -11,6 +11,7 @@ export default () => {
         const isActive = pathname === route;
         return (
           <Link
+            key={route}
             to={route}
             className={clsx(
               isActive && "bg-primary-500 rounded-[10px]",
@@ -27,7 +28,7 @@ export default () => {
                 isActive && "invert-white"
               )}
             />
-            <p className="tiny-medium text-light-2">{label}</p>
+            <p className="text-light-2">{label}</p>
           </Link>
         );
       })}

@@ -1,9 +1,39 @@
 import * as z from "zod";
 
+enum MinMaxEnum {
+  MIN,
+  MAX,
+}
+
+function genMinMaxMessage(minMax: MinMaxEnum, fieldName?: string) {
+  return `${fieldName ? fieldName + " is t" : "T"}oo ${
+    minMax === MinMaxEnum.MIN ? "short" : "long"
+  }`;
+}
+
+const genStr2Validator = (
+  minMax?: [min: number, max?: number],
+  fieldName?: string
+) => {
+  const min = minMax?.[0] || 2;
+  const max = minMax?.[1];
+  console.log({ min, max });
+  const validator = z
+    .string()
+    .min(min, { message: genMinMaxMessage(MinMaxEnum.MIN, fieldName) });
+  if (max) {
+    validator.max(max, {
+      message: genMinMaxMessage(MinMaxEnum.MAX, fieldName),
+    });
+  }
+  console.log({ validator });
+  return validator;
+};
+
 export const signupValidation = z
   .object({
-    name: z.string().min(2, { message: "Too short" }),
-    username: z.string().min(2, { message: "Too short" }),
+    name: genStr2Validator(),
+    username: genStr2Validator(),
     email: z.string().email(),
     password: z
       .string()
@@ -24,4 +54,11 @@ export const signupValidation = z
 export const signinValidation = z.object({
   email: z.string().email(),
   password: z.string(),
+});
+
+export const createPostValidation = z.object({
+  file: z.custom<File[]>(),
+  caption: genStr2Validator([5, 2200]),
+  location: genStr2Validator([2, 100]),
+  tags: z.string(),
 });

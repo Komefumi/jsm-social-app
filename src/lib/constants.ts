@@ -1,3 +1,7 @@
+export const assetDataMap: Record<string, [path: string, alt: string]> = {
+  fileUploadIcon: ["/assets/icons/file-upload.svg", "file-upload"],
+};
+
 export const sidebarLinks = [
   {
     imgURL: "/assets/icons/home.svg",

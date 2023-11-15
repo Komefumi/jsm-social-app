@@ -52,6 +52,8 @@ export type IUpdatePost = {
   tags?: string;
 };
 
+export type IPostCommon = INewPost | IUpdatePost;
+
 export type IUser = {
   id: string;
   name: string;
