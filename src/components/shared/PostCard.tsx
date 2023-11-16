@@ -1,12 +1,21 @@
+import { useAuthStore } from "@/lib/state";
 import { formatForTimeAgo } from "@/lib/utils";
 import { Models } from "appwrite";
+import clsx from "clsx";
 import { Link } from "react-router-dom";
+import PostStats from "./PostStats";
 
 interface Props {
   post: Models.Document;
 }
 
 export default ({ post }: Props) => {
+  const { user } = useAuthStore();
+
+  console.log(post);
+
+  if (!post.creator) return;
+
   return (
     <div className="post-card">
       <div className="flex-between">
@@ -36,7 +45,32 @@ export default ({ post }: Props) => {
             </div>
           </div>
         </div>
+
+        <Link
+          className={clsx(user.id !== post.creator.$id && "hidden")}
+          to={`/update-post/${post.$id}`}
+        >
+          <img src="/assets/icons/edit.svg" alt="edit" width={20} height={20} />
+        </Link>
       </div>
+      <Link to={`/posts/${post.id}`}>
+        <div className="small-medium lg:base-medium py-5">
+          <p>{post.caption}</p>
+          <ul className="flex gap-1 mt-2">
+            {post.tags.map((tag: string) => (
+              <li className="text-light-3" key={tag}>
+                #{tag}
+              </li>
+            ))}
+          </ul>
+        </div>
+        <img
+          className="post-card--img"
+          src={post.imageURL || "/assets/icons/profile-placeholder.svg"}
+          alt="post image"
+        />
+      </Link>
+      <PostStats post={post} userID={user.id} />
     </div>
   );
 };

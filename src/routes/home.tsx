@@ -1,7 +1,7 @@
 import Loader from "@/components/shared/Loader";
 import PostCard from "@/components/shared/PostCard";
 import { useGetRecentPosts } from "@/lib/react-query/queries-and-mutations";
-import { Models } from "appwrite";
+import { IPostDocument } from "@/lib/types";
 
 export default () => {
   const { data: posts, isPending: isLoadingPosts } = useGetRecentPosts();
@@ -15,8 +15,8 @@ export default () => {
             <Loader />
           ) : (
             <ul className="flex flex-col flex-1 gap-9 w-full">
-              {posts?.documents?.map((post: Models.Document) => (
-                <PostCard post={post} />
+              {posts?.documents?.map((post: IPostDocument) => (
+                <PostCard key={post.$id} post={post} />
               ))}
             </ul>
           )}

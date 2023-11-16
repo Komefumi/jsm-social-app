@@ -1,6 +1,8 @@
 import React from "react";
 import { Models } from "appwrite";
 
+type IDType = string;
+
 export type IAuthContext = {
   user: IUser;
   isLoading: boolean;
@@ -63,7 +65,27 @@ export type IUser = {
   bio: string;
 };
 
-export interface IUserDocument extends Models.Document, IUser {}
+export interface IUserDocument extends Models.Document, IUser {
+  posts: unknown[];
+  imageID: IDType;
+  accountID: IDType;
+  save: IPostDocument[];
+}
+
+export interface IPostDocument extends Models.Document {
+  caption?: string;
+  creator: IUserDocument;
+  likes: IUserDocument[];
+  tags: string[];
+  location?: string;
+}
+
+export interface ISaveDocument extends Models.Document {
+  user: IUserDocument;
+  post: IPostDocument;
+}
+
+// export interface
 
 export type INewUser = {
   name: string;

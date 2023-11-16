@@ -17,7 +17,6 @@ const genStr2Validator = (
 ) => {
   const min = minMax?.[0] || 2;
   const max = minMax?.[1];
-  console.log({ min, max });
   const validator = z
     .string()
     .min(min, { message: genMinMaxMessage(MinMaxEnum.MIN, fieldName) });
@@ -26,7 +25,6 @@ const genStr2Validator = (
       message: genMinMaxMessage(MinMaxEnum.MAX, fieldName),
     });
   }
-  console.log({ validator });
   return validator;
 };
 

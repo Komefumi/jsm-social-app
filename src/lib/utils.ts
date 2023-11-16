@@ -1,5 +1,6 @@
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
+import { ISaveDocument } from "./types";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -45,4 +46,8 @@ export function formatForTimeAgo(dateString: string) {
 
 export function checkIsLiked(likeList: string[], userID: string) {
   return likeList.includes(userID);
+}
+
+export function checkIsSaved(saveList: ISaveDocument[], postID: string) {
+  return !!saveList.find(({ post }) => post.$id === postID);
 }
