@@ -14,11 +14,24 @@ export const trpc = createTRPCProxyClient<ServerAppRouter>({
 
 export async function createUserAccount(user: INewUser) {
   try {
-    const { newlyCreatedUser } = await trpc.createUser.mutate(user);
-    return newlyCreatedUser;
+    const result = await trpc.createUser.mutate(user);
+    return result;
   } catch (error) {
     console.error(error);
     throw new Error("Failed to register");
   }
   // const result = await trpc.userCreate.mutate({ name: "string" });
+}
+
+export async function signInAccount(user: {
+  usernameOrEmail: string;
+  password: string;
+}) {
+  try {
+    const result = await trpc.login.query(user);
+    return result;
+  } catch (error) {
+    console.error(error);
+    throw new Error("Failed to login");
+  }
 }

@@ -18,16 +18,17 @@ import Loader from "@/components/shared/Loader";
 import { useToast } from "@/components/ui/use-toast";
 import { useUserSignIn } from "@/lib/react-query/queries-and-mutations";
 import { useAuthStore } from "@/lib/state";
+import { checkTokenAndSet } from "@/lib/utils";
 
 type Type__SigninValidation = z.infer<typeof signinValidation>;
 
 const fieldToData: Record<keyof Type__SigninValidation, [label: string]> = {
-  email: ["Email"],
+  usernameOrEmail: ["Username Or Email"],
   password: ["Password"],
 };
 
 const orderedFieldNames: (keyof Type__SigninValidation)[] = [
-  "email",
+  "usernameOrEmail",
   "password",
 ];
 
@@ -38,36 +39,40 @@ export default () => {
   // const { mutateAsync: createUserAccount, isPending: isCreatingUser } =
   // useCreateUserAccount();
   const { mutateAsync: signInAccount, isPaused: isLoggingIn } = useUserSignIn();
-  const { checkAuthUser } = useAuthStore();
-  console.log({ checkAuthUser: checkAuthUser.toString() });
+  const { setToken } = useAuthStore();
+  // console.log({ checkAuthUser: checkAuthUser.toString() });
 
   const form = useForm<z.infer<typeof signinValidation>>({
     resolver: zodResolver(signinValidation),
     defaultValues: {
-      email: "",
+      usernameOrEmail: "",
       password: "",
     },
   });
 
   // 2. Define a submit handler.
   async function onSubmit(values: z.infer<typeof signinValidation>) {
-    const authResult = await checkAuthUser();
-    console.log({ authResult });
+    console.log("submit triggered");
+    // const authResult = await checkAuthUser();
+    // console.log({ authResult });
     // Do something with the form values.
     // ✅ This will be type-safe and validated.
-    console.log(values);
-    const session = await signInAccount({ ...values });
+    // console.log(values);
+    const { token: mintedToken } = await signInAccount({ ...values });
+    console.log({ mintedToken });
 
-    if (!session) {
-      console.log("no session");
+    const isValid = checkTokenAndSet(mintedToken, setToken);
+    console.log({ isValid });
+    if (!isValid) {
       toast({
         title: "Sign In Failed",
-        description: "Please try to log in with your new credentials",
+        description: "Please try to log in with your credentials",
         // variant: "destructive",
       });
       return;
     }
 
+    form.reset();
     toast({
       title: "Successfully Logged In",
     });
@@ -144,7 +149,9 @@ export default () => {
                     <FormLabel>{label}</FormLabel>
                     <FormControl>
                       <Input
-                        type={fieldName === "email" ? "email" : "password"}
+                        type={
+                          fieldName === "usernameOrEmail" ? "text" : "password"
+                        }
                         className="shad-input"
                         {...field}
                       />

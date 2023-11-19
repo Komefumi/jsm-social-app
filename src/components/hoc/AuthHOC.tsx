@@ -8,8 +8,8 @@ interface Props {
 
 export default ({ children }: Props) => {
   const navigate = useNavigate();
-  const { checkAuthUser } = useAuthStore();
-
+  const { token } = useAuthStore();
+  /*
   useEffect(() => {
     console.log("on mount for AuthHOC");
     const cookieFallback = localStorage.getItem("cookieFallback");
@@ -20,6 +20,16 @@ export default ({ children }: Props) => {
     }
     checkAuthUser();
   }, []);
+  */
+
+  useEffect(() => {
+    if (!token) {
+      console.log("empty token: navigating to sign in");
+      navigate("/auth/sign-in");
+    } else {
+      navigate("/");
+    }
+  }, [token]);
 
   return <>{children}</>;
 };

@@ -6,12 +6,21 @@ type IDType = string;
 
 export type IAuthContext = {
   user: IUser;
+  token: string;
+  setToken: (token: string) => void;
+  // checkAuthUser: () => Promise<boolean>;
+};
+
+/*
+export type IAuthContext = {
+  user: IUser;
   isLoading: boolean;
   setUser: (user: IUser) => void;
   isAuthenticated: boolean;
   setIsAuthenticated: (value: boolean) => void;
   checkAuthUser: () => Promise<boolean>;
 };
+*/
 
 export type IContextType = {
   user: IUser;

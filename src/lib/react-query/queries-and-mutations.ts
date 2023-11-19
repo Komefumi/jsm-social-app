@@ -9,14 +9,14 @@ import {
   getSingularSaves,
   likePost,
   savePost,
-  signInAccount,
+  // signInAccount,
   signOutAccount,
   updateSaves,
 } from "../appwrite/api";
 import { INewPost, INewUser, ISaveDocument } from "../types";
 import { QUERY_KEYS } from "./query-keys";
 import { Models } from "appwrite";
-import { createUserAccount } from "../api";
+import { createUserAccount, signInAccount } from "../api";
 // createUserAccount
 
 export const useCreateUserAccount = () => {
@@ -27,7 +27,7 @@ export const useCreateUserAccount = () => {
 
 export const useUserSignIn = () => {
   return useMutation({
-    mutationFn: (user: { email: string; password: string }) =>
+    mutationFn: (user: { usernameOrEmail: string; password: string }) =>
       signInAccount(user),
   });
 };

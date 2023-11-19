@@ -18,11 +18,9 @@ import { Button } from "@/components/ui/button";
 import { signupValidation } from "@/lib/validation";
 import Loader from "@/components/shared/Loader";
 import { useToast } from "@/components/ui/use-toast";
-import {
-  useCreateUserAccount,
-  useUserSignIn,
-} from "@/lib/react-query/queries-and-mutations";
+import { useCreateUserAccount } from "@/lib/react-query/queries-and-mutations";
 import { useAuthStore } from "@/lib/state";
+import { checkTokenAndSet } from "@/lib/utils";
 
 type Type__SignupValidation = z.infer<typeof signupValidation>;
 
@@ -56,9 +54,7 @@ export default () => {
 
   const { mutateAsync: createUserAccount, isPending: isCreatingUser } =
     useCreateUserAccount();
-  const { mutateAsync: signInAccount } = useUserSignIn();
-  const { checkAuthUser } = useAuthStore();
-  // console.log({ checkAuthUser: checkAuthUser.toString() });
+  const { setToken } = useAuthStore();
 
   const form = useForm<z.infer<typeof signupValidation>>({
     resolver: zodResolver(signupValidation),
@@ -74,53 +70,37 @@ export default () => {
   // 2. Define a submit handler.
   async function onSubmit(values: z.infer<typeof signupValidation>) {
     console.log("onSubmit hit");
-    const authResult = await checkAuthUser();
-    console.log({ authResult });
+    // const authResult = await checkAuthUser();
+    // console.log({ authResult });
     // Do something with the form values.
     // ✅ This will be type-safe and validated.
     console.log(values);
-    const newUser = await createUserAccount(
-      _.omit(values, ["passwordConfirmation"])
-    );
-    if (!newUser) {
-      toast({
-        title: "User Registration Failed",
-        description: "For some reason creation of user account failed",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    const session = await signInAccount({
-      email: values.email,
-      password: values.password,
-    });
-
-    if (!session) {
-      console.log("no session");
-      toast({
-        title: "Sign In Failed",
-        description: "Please try to log in with your new credentials",
-        // variant: "destructive",
-      });
-    }
-
-    console.log(JSON.stringify(checkAuthUser, null, 2));
-    const isLoggedIn = await checkAuthUser();
-    console.log({ isLoggedIn });
-    if (isLoggedIn) {
-      form.reset();
-      console.log("navigating from SignUpForm");
-      navigate("/");
-    } else {
-      console.log("failed check auth");
-      // await deleteUser(newUser.$id);
+    try {
+      const { token: newlyMintedToken } = await createUserAccount(
+        _.omit(values, ["passwordConfirmation"])
+      );
+      // Sanity check, making sure token is not invalid
+      const isValid = checkTokenAndSet(newlyMintedToken, setToken);
+      if (isValid) {
+        form.reset();
+        console.log("navigating from SignUpForm");
+        navigate("/");
+      } else {
+        toast({
+          title: "Sign Up Success; Sign in Failed",
+          description: "Please try to log in with your created credentials",
+        });
+        navigate("/auth/sign-in");
+      }
+    } catch (error) {
+      console.error(error);
       toast({
         title: "Sign In Failed",
         description: "Please try to log in with your new credentials",
         // variant: "destructive",
       });
     }
+
     // console.log({ newUser });
   }
 

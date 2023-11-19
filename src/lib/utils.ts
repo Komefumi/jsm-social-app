@@ -1,5 +1,6 @@
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
+import { jwtDecode } from "jwt-decode";
 import { ISaveDocument } from "./types";
 
 export function cn(...inputs: ClassValue[]) {
@@ -50,4 +51,23 @@ export function checkIsLiked(likeList: string[], userID: string) {
 
 export function checkIsSaved(saveList: ISaveDocument[], postID: string) {
   return !!saveList.find(({ post }) => post.$id === postID);
+}
+
+export function checkToken(token: string) {
+  const data = jwtDecode(token);
+  if (!data?.exp) return false;
+  if (data.exp <= new Date().getTime() / 1000) return false;
+  return true;
+}
+
+export function checkTokenAndSet(
+  token: string,
+  setter: (token: string) => void
+) {
+  if (checkToken(token)) {
+    setter(token);
+    return true;
+  }
+
+  return false;
 }
