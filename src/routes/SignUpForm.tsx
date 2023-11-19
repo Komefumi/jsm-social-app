@@ -1,7 +1,8 @@
-import * as z from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Link, useNavigate } from "react-router-dom";
+import * as z from "zod";
+import _ from "lodash";
 
 import {
   Form,
@@ -57,7 +58,7 @@ export default () => {
     useCreateUserAccount();
   const { mutateAsync: signInAccount } = useUserSignIn();
   const { checkAuthUser } = useAuthStore();
-  console.log({ checkAuthUser: checkAuthUser.toString() });
+  // console.log({ checkAuthUser: checkAuthUser.toString() });
 
   const form = useForm<z.infer<typeof signupValidation>>({
     resolver: zodResolver(signupValidation),
@@ -72,12 +73,15 @@ export default () => {
 
   // 2. Define a submit handler.
   async function onSubmit(values: z.infer<typeof signupValidation>) {
+    console.log("onSubmit hit");
     const authResult = await checkAuthUser();
     console.log({ authResult });
     // Do something with the form values.
     // ✅ This will be type-safe and validated.
     console.log(values);
-    const newUser = await createUserAccount(values);
+    const newUser = await createUserAccount(
+      _.omit(values, ["passwordConfirmation"])
+    );
     if (!newUser) {
       toast({
         title: "User Registration Failed",

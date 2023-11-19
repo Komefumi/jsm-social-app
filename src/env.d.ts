@@ -9,6 +9,7 @@ interface ImportMetaEnv {
   readonly VITE_APPWRITE_USERS_COLLECTION_ID: string;
   readonly VITE_APPWRITE_POSTS_COLLECTION_ID: string;
   readonly VITE_APPWRITE_SAVES_COLLECTION_ID: string;
+  readonly VITE_TRPC_SERVER_URL: string;
   // more env variables...
 }
 

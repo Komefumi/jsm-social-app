@@ -1,5 +1,6 @@
 import React from "react";
 import { Models } from "appwrite";
+export type { AppRouter as ServerAppRouter } from "../../server-code/src/index";
 
 type IDType = string;
 
@@ -92,4 +93,5 @@ export type INewUser = {
   email: string;
   username: string;
   password: string;
+  bio?: string;
 };

@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   createPost,
-  createUserAccount,
+  // createUserAccount,
   deleteSaveForUser,
   deleteSavedPost,
   getCurrentUser,
@@ -16,6 +16,8 @@ import {
 import { INewPost, INewUser, ISaveDocument } from "../types";
 import { QUERY_KEYS } from "./query-keys";
 import { Models } from "appwrite";
+import { createUserAccount } from "../api";
+// createUserAccount
 
 export const useCreateUserAccount = () => {
   return useMutation({
