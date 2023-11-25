@@ -7,18 +7,18 @@ const fui = assetDataMap["fileUploadIcon"];
 
 interface Props {
   mediaURL?: URL;
-  fieldChange: (files: File[]) => void;
+  fieldChange: (file: File) => void;
 }
 
 export default ({ fieldChange }: Props) => {
-  const [file, setFile] = useState<File[]>([]);
+  const [file, setFile] = useState<File | null>(null);
   const [fileURL, setFileURL] = useState<string | null>(null);
   const onDrop = useCallback(
     (acceptedFiles: FileWithPath[]) => {
-      setFile(acceptedFiles);
-      fieldChange(acceptedFiles);
-      setFileURL(URL.createObjectURL(acceptedFiles[0]));
-      // Do something with the files
+      const fileGotten = acceptedFiles[0];
+      setFile(fileGotten);
+      fieldChange(fileGotten);
+      setFileURL(URL.createObjectURL(fileGotten));
     },
     [file]
   );

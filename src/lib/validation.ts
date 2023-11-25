@@ -55,8 +55,9 @@ export const signinValidation = z.object({
 });
 
 export const createPostValidation = z.object({
-  file: z.custom<File[]>(),
+  // file: z.custom<File | null>(),
+  imageURL: z.string().url({ message: "Must be a valid URL" }).optional(),
   caption: genStr2Validator([5, 2200]),
-  location: genStr2Validator([2, 100]),
-  tags: z.string(),
+  location: genStr2Validator([2, 100]).optional(),
+  // tags: z.string(),
 });

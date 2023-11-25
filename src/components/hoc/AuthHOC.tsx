@@ -1,5 +1,6 @@
+import { ReactNode, useState, useEffect } from "react";
 import { useAuthStore } from "@/lib/state";
-import { ReactNode, useEffect } from "react";
+import { retrieveTokenFromStorageAndCheck } from "@/lib/utils";
 import { useNavigate } from "react-router";
 
 interface Props {
@@ -7,29 +8,28 @@ interface Props {
 }
 
 export default ({ children }: Props) => {
+  const [tokenRetrievalDone, setTokenRetrievalDone] = useState(false);
   const navigate = useNavigate();
-  const { token } = useAuthStore();
-  /*
-  useEffect(() => {
-    console.log("on mount for AuthHOC");
-    const cookieFallback = localStorage.getItem("cookieFallback");
-    if (["[]", null].includes(cookieFallback)) {
-      console.log("navigating from AuthContext");
-      navigate("/auth/sign-in");
-      return;
-    }
-    checkAuthUser();
-  }, []);
-  */
+  const { token, setToken } = useAuthStore();
 
   useEffect(() => {
+    retrieveTokenFromStorageAndCheck(setToken);
+    setTokenRetrievalDone(true);
+  }, []);
+
+  useEffect(() => {
+    if (!token && !tokenRetrievalDone) {
+      return;
+    }
     if (!token) {
       console.log("empty token: navigating to sign in");
       navigate("/auth/sign-in");
-    } else {
-      navigate("/");
+      return;
     }
-  }, [token]);
+    console.log("Token now in effect");
+  }, [token, tokenRetrievalDone]);
+
+  if (!tokenRetrievalDone && !token) return null;
 
   return <>{children}</>;
 };

@@ -1,16 +1,14 @@
-import { Link, NavLink, useLocation } from "react-router-dom";
+import { Link, NavLink, useNavigate, useLocation } from "react-router-dom";
 import { Button } from "../ui/button";
-import { useSignOutAccount } from "@/lib/react-query/queries-and-mutations";
 import { useAuthStore } from "@/lib/state";
 import { sidebarLinks } from "@/lib/constants";
 import { INavLink } from "@/lib/types";
 import clsx from "clsx";
 
 export default () => {
+  const navigate = useNavigate();
   const { pathname } = useLocation();
-  const { user } = useAuthStore();
-  const { mutate: signOutAccount, isPending: isLoggingOut } =
-    useSignOutAccount();
+  const { user, logout } = useAuthStore();
   return (
     <nav className="left-sidebar">
       <div className="flex flex-col gap-11">
@@ -64,9 +62,9 @@ export default () => {
         variant="ghost"
         className="shad-button__ghost"
         onClick={() => {
-          signOutAccount();
+          logout();
+          navigate("/auth/sign-in");
         }}
-        disabled={isLoggingOut}
       >
         <img src="/assets/icons/logout.svg" alt="" />
         <p className="small-medium lg:base-medium">Logout</p>

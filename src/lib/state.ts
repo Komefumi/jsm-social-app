@@ -23,5 +23,8 @@ export const useAuthStore = create<IAuthContext>()((set) => {
       setUsingSet("user", data);
       setUsingSet("token", token);
     },
+    logout: () => {
+      setUsingSet("token", null);
+    },
   };
 });

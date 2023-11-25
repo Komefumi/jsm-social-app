@@ -1,7 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
-  createPost,
-  // createUserAccount,
   deleteSaveForUser,
   deleteSavedPost,
   getCurrentUser,
@@ -9,15 +7,18 @@ import {
   getSingularSaves,
   likePost,
   savePost,
-  // signInAccount,
   signOutAccount,
   updateSaves,
 } from "../appwrite/api";
-import { INewPost, INewUser, ISaveDocument } from "../types";
+import { ArgsGetTimeline, INewPost, INewUser, ISaveDocument } from "../types";
 import { QUERY_KEYS } from "./query-keys";
 import { Models } from "appwrite";
-import { createUserAccount, signInAccount } from "../api";
-// createUserAccount
+import {
+  createPost,
+  getTimeline,
+  createUserAccount,
+  signInAccount,
+} from "../api";
 
 export const useCreateUserAccount = () => {
   return useMutation({
@@ -47,6 +48,13 @@ export const useCreatePost = () => {
         queryKey: [QUERY_KEYS.GET_RECENT_POSTS],
       });
     },
+  });
+};
+
+export const useGetTimeline = (args: ArgsGetTimeline) => {
+  return useQuery({
+    queryKey: [QUERY_KEYS.GET_TIMELINE],
+    queryFn: () => getTimeline(args),
   });
 };
 

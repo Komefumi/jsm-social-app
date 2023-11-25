@@ -1,7 +1,7 @@
 import { ID, Query, Models } from "appwrite";
 import { account, appwriteConfig, avatars, databases, storage } from "./config";
 import {
-  INewPost,
+  // INewPost,
   INewUser,
   IPostDocument,
   ISaveDocument,
@@ -112,10 +112,11 @@ export async function signOutAccount() {
   }
 }
 
+/*
 export async function createPost(post: INewPost) {
   try {
     // Upload file to appwrite storage
-    const uploadedFile = await uploadFile(post.file[0]);
+    const uploadedFile = await uploadFile(post.file);
 
     if (!uploadedFile) throw Error;
 
@@ -127,7 +128,7 @@ export async function createPost(post: INewPost) {
     }
 
     // Convert tags into array
-    const tags = post.tags?.replace(/ /g, "").split(",") || [];
+    // const tags = post.tags?.replace(/ /g, "").split(",") || [];
 
     // Create post
     const newPost = await databases.createDocument(
@@ -140,7 +141,7 @@ export async function createPost(post: INewPost) {
         imageURL: fileURL,
         imageID: uploadedFile.$id,
         location: post.location,
-        tags: tags,
+        // tags: tags,
       }
     );
 
@@ -154,6 +155,7 @@ export async function createPost(post: INewPost) {
     console.log(error);
   }
 }
+*/
 
 // ============================== UPLOAD FILE
 export async function uploadFile(file: File) {

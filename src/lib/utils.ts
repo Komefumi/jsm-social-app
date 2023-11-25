@@ -2,6 +2,7 @@ import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { jwtDecode } from "jwt-decode";
 import { ISaveDocument } from "./types";
+import ls from "localstorage-slim";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -60,14 +61,48 @@ export function checkToken(token: string) {
   return true;
 }
 
+const TOKEN = "TOKEN";
+
+function saveTokenToStorage(token: string) {
+  ls.set(TOKEN, token);
+}
+
+export function retrieveTokenWithCheck() {
+  const tokenString = ls.get(TOKEN);
+  console.log({ tokenString });
+  if (!tokenString) return null;
+  if (checkToken(tokenString as string)) {
+    return tokenString;
+  } else {
+    ls.remove(TOKEN);
+    return null;
+  }
+}
+
 export function checkTokenAndSet(
   token: string,
-  setter: (token: string) => void
+  setterForAppState: (token: string) => void
 ) {
   if (checkToken(token)) {
-    setter(token);
+    setterForAppState(token);
+    saveTokenToStorage(token);
     return true;
   }
 
   return false;
+}
+
+export function retrieveTokenFromStorageAndCheck(
+  setterForAppState: (token: string) => void
+) {
+  const tokenString = ls.get(TOKEN);
+  if (!tokenString) return null;
+  console.log({ tokenString });
+  const isValid = checkTokenAndSet(tokenString as string, setterForAppState);
+  if (!isValid) {
+    ls.remove(TOKEN);
+    return null;
+  }
+
+  return tokenString;
 }

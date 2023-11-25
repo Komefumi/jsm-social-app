@@ -15,8 +15,7 @@ import { Input } from "@/components/ui/input";
 import { createPostValidation } from "@/lib/validation";
 import { Button } from "./ui/button";
 import { Textarea } from "./ui/textarea";
-import FileUploader from "./shared/FileUploader";
-import { INewPost, IPostCommon, IUpdatePost } from "@/lib/types";
+import { IPostCommon } from "@/lib/types";
 import { useAuthStore } from "@/lib/state";
 import { useToast } from "./ui/use-toast";
 import { useCreatePost } from "@/lib/react-query/queries-and-mutations";
@@ -28,20 +27,14 @@ const fieldToData: Record<
   [label: string, description?: string, options?: { placeholder: string }]
 > = {
   caption: ["Caption", undefined],
-  file: ["Add Photos", undefined],
+  imageURL: ["Photo URL", undefined],
   location: ["Location", "Add Location"],
-  tags: [
-    "Tags",
-    'Add tags (separated by comma ",")',
-    { placeholder: "Art, Expression, Learning" },
-  ],
 };
 
 const orderedFieldNames: (keyof Type__CreatePostValidation)[] = [
   "caption",
-  "file",
+  "imageURL",
   "location",
-  "tags",
 ];
 
 const fieldToRendering: Record<
@@ -54,25 +47,12 @@ const fieldToRendering: Record<
       {...field}
     />
   ),
-  file: ({ post, field }) => {
+  imageURL: ({ field }) => {
     console.log({ fieldForFile: field });
-    return (
-      <FileUploader
-        fieldChange={field.onChange}
-        mediaURL={(post as IUpdatePost)?.imageURL}
-      />
-    );
+    return <Input type="url" className="shad-input" {...field} />;
   },
   location: ({ field }) => (
     <Input type="text" className="shad-input" {...field} />
-  ),
-  tags: ({ field }) => (
-    <Input
-      type="text"
-      className="shad-input"
-      placeholder={fieldToData["tags"][2]?.placeholder}
-      {...field}
-    />
   ),
 };
 
@@ -83,15 +63,14 @@ interface Props {
 export default ({ post }: Props) => {
   const navigate = useNavigate();
   const { mutateAsync: createPost } = useCreatePost();
-  const { user } = useAuthStore();
+  const { user, token } = useAuthStore();
   const { toast } = useToast();
   const form = useForm<z.infer<typeof createPostValidation>>({
     resolver: zodResolver(createPostValidation),
     defaultValues: {
       caption: post?.caption || "",
-      file: [],
-      location: post?.location || "",
-      tags: post?.tags || "",
+      imageURL: undefined,
+      location: undefined,
     },
   });
 
@@ -99,6 +78,17 @@ export default ({ post }: Props) => {
     // const authResult = await checkAuthUser();
     console.log("in onSubmit");
     console.log({ values });
+    await createPost({ ...values, userID: user.id, token: token || "" });
+    toast({ title: "Post successfully made!" });
+    navigate("/");
+    // const fileContent = await values.file!.text();
+    // values.file?.stream().pipeTo(base64.encode)
+    // console.log({ fileContent });
+    // const base64Encoded = base64.encode(fileContent);
+    // console.log({ base64Encoded });
+    // const base64 = btoa(unescape(encodeURIComponent(fileContent)));
+    // console.log({ base64 });
+    /*
     console.log("did we get here?");
     const newPost = await createPost({
       ...values,
@@ -111,6 +101,7 @@ export default ({ post }: Props) => {
     }
 
     navigate("/");
+    */
   }
 
   return (

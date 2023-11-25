@@ -6,21 +6,14 @@ type IDType = string;
 
 export type IAuthContext = {
   user: IUser;
-  token: string;
+  token: string | null;
   setToken: (token: string) => void;
-  // checkAuthUser: () => Promise<boolean>;
+  logout: () => void;
 };
 
-/*
-export type IAuthContext = {
-  user: IUser;
-  isLoading: boolean;
-  setUser: (user: IUser) => void;
-  isAuthenticated: boolean;
-  setIsAuthenticated: (value: boolean) => void;
-  checkAuthUser: () => Promise<boolean>;
-};
-*/
+export interface IAuthPayload {
+  token: string;
+}
 
 export type IContextType = {
   user: IUser;
@@ -46,13 +39,14 @@ export type IUpdateUser = {
   file: File[];
 };
 
-export type INewPost = {
+export interface INewPost extends IAuthPayload {
   userID: string;
   caption: string;
-  file: File[];
+  imageURL?: string;
+  // file: File;
   location?: string;
-  tags?: string;
-};
+  // tags?: string;
+}
 
 export type IUpdatePost = {
   postID: string;
@@ -61,7 +55,7 @@ export type IUpdatePost = {
   imageURL: URL;
   file: File[];
   location?: string;
-  tags?: string;
+  // tags?: string;
 };
 
 export type IPostCommon = INewPost | IUpdatePost;
@@ -86,7 +80,7 @@ export interface IPostDocument extends Models.Document {
   caption?: string;
   creator: IUserDocument;
   likes: IUserDocument[];
-  tags: string[];
+  // tags: string[];
   location?: string;
 }
 
@@ -103,4 +97,37 @@ export type INewUser = {
   username: string;
   password: string;
   bio?: string;
+};
+
+export interface ArgsGetTimeline extends IAuthPayload {
+  pageNum?: number;
+}
+
+export type LikeData = {
+  id: number;
+  userId: number;
+  postId: number;
+  createdAt: Date;
+  updatedAt: Date;
+};
+
+export type BackendReturnedPost = {
+  likes: LikeData[];
+  Author: {
+    id: number;
+    name: string;
+    imageURL: string | null;
+    username: string;
+    email: string;
+    passwordHash: string;
+    bio: string;
+  } | null;
+} & {
+  id: number;
+  caption: string;
+  imageURL: string | null;
+  location: string | null;
+  authorId: number | null;
+  createdAt: Date;
+  updatedAt: Date;
 };

@@ -1,10 +1,25 @@
+import { useEffect } from "react";
 import Loader from "@/components/shared/Loader";
 import PostCard from "@/components/shared/PostCard";
-import { useGetRecentPosts } from "@/lib/react-query/queries-and-mutations";
-import { IPostDocument } from "@/lib/types";
+import { useGetTimeline } from "@/lib/react-query/queries-and-mutations";
+import { useAuthStore } from "@/lib/state";
+import { BackendReturnedPost } from "@/lib/types";
 
 export default () => {
-  const { data: posts, isPending: isLoadingPosts } = useGetRecentPosts();
+  const { token } = useAuthStore();
+  console.log({ token });
+  const {
+    data: posts,
+    isPending: isLoadingPosts,
+    refetch,
+  } = useGetTimeline({
+    token: token || "",
+  });
+
+  useEffect(() => {
+    console.log("refetching");
+    refetch();
+  }, [token]);
 
   return (
     <div className="flex flex-1">
@@ -15,8 +30,11 @@ export default () => {
             <Loader />
           ) : (
             <ul className="flex flex-col flex-1 gap-9 w-full">
-              {posts?.documents?.map((post: IPostDocument) => (
-                <PostCard key={post.$id} post={post} />
+              {(posts || []).map((post) => (
+                <PostCard
+                  key={post.id}
+                  post={post as unknown as BackendReturnedPost}
+                />
               ))}
             </ul>
           )}
