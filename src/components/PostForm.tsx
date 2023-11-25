@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { ControllerRenderProps, useForm } from "react-hook-form";
-import { useNavigate } from "react-router-dom";
 import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
@@ -68,7 +67,6 @@ interface Props {
 
 export default ({ post }: Props) => {
   const [showing, setShowing] = useState(false);
-  const navigate = useNavigate();
   const { mutateAsync: createPost } = useCreatePost();
   const { user, token } = useAuthStore();
   const { toast } = useToast();
@@ -87,7 +85,8 @@ export default ({ post }: Props) => {
     console.log({ values });
     await createPost({ ...values, userID: user.id, token: token || "" });
     toast({ title: "Post successfully made!" });
-    navigate("/");
+    form.reset();
+    setShowing(false);
     // const fileContent = await values.file!.text();
     // values.file?.stream().pipeTo(base64.encode)
     // console.log({ fileContent });
@@ -112,7 +111,7 @@ export default ({ post }: Props) => {
   }
 
   return (
-    <Collapsible className="w-full">
+    <Collapsible open={showing} className="w-full">
       <CollapsibleTrigger
         className="w-full flex"
         onClick={() => {
