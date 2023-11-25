@@ -4,6 +4,7 @@ import PostCard from "@/components/shared/PostCard";
 import { useGetTimeline } from "@/lib/react-query/queries-and-mutations";
 import { useAuthStore } from "@/lib/state";
 import { BackendReturnedPost } from "@/lib/types";
+import PostForm from "@/components/PostForm";
 
 export default () => {
   const { token } = useAuthStore();
@@ -25,6 +26,7 @@ export default () => {
     <div className="flex flex-1">
       <div className="home-container">
         <div className="home-posts">
+          <PostForm />
           <h2 className="h3-bold md:h2-bold text-left w-full">Home Feed</h2>
           {isLoadingPosts && !posts ? (
             <Loader />

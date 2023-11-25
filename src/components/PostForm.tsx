@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { ControllerRenderProps, useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import * as z from "zod";
@@ -19,6 +20,11 @@ import { IPostCommon } from "@/lib/types";
 import { useAuthStore } from "@/lib/state";
 import { useToast } from "./ui/use-toast";
 import { useCreatePost } from "@/lib/react-query/queries-and-mutations";
+import {
+  Collapsible,
+  CollapsibleTrigger,
+  CollapsibleContent,
+} from "@radix-ui/react-collapsible";
 
 type Type__CreatePostValidation = z.infer<typeof createPostValidation>;
 
@@ -61,6 +67,7 @@ interface Props {
 }
 
 export default ({ post }: Props) => {
+  const [showing, setShowing] = useState(false);
   const navigate = useNavigate();
   const { mutateAsync: createPost } = useCreatePost();
   const { user, token } = useAuthStore();
@@ -105,52 +112,66 @@ export default ({ post }: Props) => {
   }
 
   return (
-    <Form {...form}>
-      <form
-        onSubmit={form.handleSubmit(onSubmit)}
-        className="flex flex-col gap-9 w-full max-w-5xl"
+    <Collapsible className="w-full">
+      <CollapsibleTrigger
+        className="w-full flex"
+        onClick={() => {
+          setShowing(!showing);
+        }}
       >
-        {orderedFieldNames.map((fieldName) => {
-          const FormInputRendering = fieldToRendering[fieldName];
-          const [label, description] = fieldToData[fieldName];
-          return (
-            <FormField
-              key={fieldName}
-              control={form.control}
-              name={fieldName}
-              render={({ field }) => {
-                console.log({ field });
-                return (
-                  <FormItem>
-                    <FormLabel>{label}</FormLabel>
-                    <FormControl>
-                      <FormInputRendering
-                        field={field as unknown as ControllerRenderProps}
-                        post={post}
-                      />
-                    </FormControl>
-                    {description && (
-                      <FormDescription>{description}</FormDescription>
-                    )}
-                    <FormMessage className="shad-form__message" />
-                  </FormItem>
-                );
-              }}
-            />
-          );
-        })}
-        <div className="flex gap-4 items-center justify-end">
-          <Button className="shad-button__dark_4" type="button">
-            Cancel
-          </Button>
-          <Button
-            className="shad-button__primary whitespace-nowrap"
-            type="submit"
+        <Button className="ml-auto">
+          {showing ? "Cancel" : "Create Post"}
+        </Button>
+      </CollapsibleTrigger>
+      <CollapsibleContent>
+        <Form {...form}>
+          <form
+            onSubmit={form.handleSubmit(onSubmit)}
+            className="flex flex-col gap-9 w-full max-w-5xl"
           >
-            Submit
-          </Button>
-        </div>
-      </form>
-    </Form>
+            {orderedFieldNames.map((fieldName) => {
+              const FormInputRendering = fieldToRendering[fieldName];
+              const [label, description] = fieldToData[fieldName];
+              return (
+                <FormField
+                  key={fieldName}
+                  control={form.control}
+                  name={fieldName}
+                  render={({ field }) => {
+                    console.log({ field });
+                    return (
+                      <FormItem>
+                        <FormLabel>{label}</FormLabel>
+                        <FormControl>
+                          <FormInputRendering
+                            field={field as unknown as ControllerRenderProps}
+                            post={post}
+                          />
+                        </FormControl>
+                        {description && (
+                          <FormDescription>{description}</FormDescription>
+                        )}
+                        <FormMessage className="shad-form__message" />
+                      </FormItem>
+                    );
+                  }}
+                />
+              );
+            })}
+            <div className="flex gap-4 items-center justify-end">
+              {/* <Button className="shad-button__dark_4" type="button">
+                Cancel
+              </Button> */}
+              <Button
+                className="shad-button__primary whitespace-nowrap"
+                type="submit"
+              >
+                Submit
+              </Button>
+            </div>
+          </form>
+        </Form>
+      </CollapsibleContent>
+    </Collapsible>
   );
 };

@@ -46,8 +46,8 @@ export function formatForTimeAgo(dateString: string) {
   }
 }
 
-export function checkIsLiked(likeList: string[], userID: string) {
-  return likeList.includes(userID);
+export function checkIsLiked(likeList: number[], userID: string) {
+  return likeList.includes(parseInt(userID));
 }
 
 export function checkIsSaved(saveList: ISaveDocument[], postID: string) {

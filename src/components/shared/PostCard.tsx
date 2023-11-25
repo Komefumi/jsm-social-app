@@ -1,8 +1,9 @@
+import { Link } from "react-router-dom";
+import clsx from "clsx";
 import { useAuthStore } from "@/lib/state";
 import { formatForTimeAgo } from "@/lib/utils";
-import clsx from "clsx";
-import { Link } from "react-router-dom";
 import { BackendReturnedPost } from "@/lib/types";
+// import PostStats from "./PostStats";
 
 interface Props {
   post: BackendReturnedPost;

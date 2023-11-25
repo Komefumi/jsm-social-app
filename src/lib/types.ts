@@ -103,6 +103,14 @@ export interface ArgsGetTimeline extends IAuthPayload {
   pageNum?: number;
 }
 
+export type SaveData = {
+  id: number;
+  folder: string;
+  userId: number;
+  createdAt: Date;
+  updatedAt: Date;
+};
+
 export type LikeData = {
   id: number;
   userId: number;
@@ -113,6 +121,7 @@ export type LikeData = {
 
 export type BackendReturnedPost = {
   likes: LikeData[];
+  saves: SaveData[];
   Author: {
     id: number;
     name: string;

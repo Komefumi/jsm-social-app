@@ -65,6 +65,13 @@ export const useGetRecentPosts = () => {
   });
 };
 
+export const useGetSaves = () => {
+  return useQuery({
+    queryKey: [],
+    queryFn: () => {},
+  });
+};
+
 export const useGetSingularSaves = (userID?: string, postID?: string) => {
   return useQuery({
     queryKey: [QUERY_KEYS.GET_SINGULAR_SAVES],

@@ -1,37 +1,38 @@
 // import { useEffect, useState } from "react";
 import {
-  useGetCurrentUser,
-  useGetSingularSaves,
+  // useGetCurrentUser,
+  // useGetSingularSaves,
   useLikePost,
-  useSavePost,
-  useDeleteSaveForUser,
+  // useSavePost,
+  // useDeleteSaveForUser,
 } from "@/lib/react-query/queries-and-mutations";
-import { Models } from "appwrite";
-import { checkIsLiked, checkIsSaved } from "@/lib/utils";
+// import { Models } from "appwrite";
+import { checkIsLiked } from "@/lib/utils";
 import clsx from "clsx";
-import { useToast } from "../ui/use-toast";
+// import { useToast } from "../ui/use-toast";
+import { BackendReturnedPost, LikeData } from "@/lib/types";
+import { useAuthStore } from "@/lib/state";
 
 interface Props {
-  post: Models.Document;
+  post: BackendReturnedPost;
   userID: string;
 }
 
-export default ({ post, userID }: Props) => {
-  const toaster = useToast();
-  const likesList = post.likes.map((user: Models.Document) => user.$id);
-  const { mutateAsync: likePost, isPending: isLikeOperationInProgress } =
-    useLikePost();
+export default ({ post }: Props) => {
+  // const toaster = useToast();
+  const likesList = post.likes.map((like: LikeData) => like.userId);
+  const { isPending: isLikeOperationInProgress } = useLikePost();
+  const { user } = useAuthStore();
+  /*
   const { mutateAsync: savePost, isPending: isSavingPost } = useSavePost();
   const { mutateAsync: deleteSaveForUser, isPending: isDeletingSave } =
     useDeleteSaveForUser();
-  const { data: currentUser } = useGetCurrentUser();
+    const { user } = useAuthStore();
   const { data: singularSaves, isFetching: isFetchingSaves } =
     useGetSingularSaves(currentUser?.$id, post.$id);
+    */
 
-  console.log({ singularSaves });
-
-  const isSaveOperationInProgress = isSavingPost || isDeletingSave;
-
+  /*
   const handleLikePost = async (
     e: React.MouseEvent<HTMLImageElement, MouseEvent>
   ) => {
@@ -55,8 +56,9 @@ export default ({ post, userID }: Props) => {
         } failed, please check your network or try again later`,
       });
     }
-  };
+  }*/
 
+  /*
   const handleSavePost = async (
     e: React.MouseEvent<HTMLImageElement, MouseEvent>
   ) => {
@@ -81,36 +83,41 @@ export default ({ post, userID }: Props) => {
       });
     }
   };
+  */
 
   return (
     <div className="flex justify-between items-center z-20">
-      <div className="flex gap-2 mr-5">
+      <div className="flex gap-2 ml-auto">
         <img
           src={`/assets/icons/${
-            checkIsLiked(likesList, userID) ? "liked" : "like"
+            checkIsLiked(likesList, user.id) ? "liked" : "like"
           }.svg`}
           alt="like"
           width={20}
           height={20}
-          onClick={(e) => {
-            handleLikePost(e);
+          onClick={() => {
+            // handleLikePost(e);
           }}
           className={clsx(isLikeOperationInProgress || "cursor-pointer")}
         />
         <p className="small-medium lg:base-medium">{likesList.length}</p>
       </div>
       <div className="flex gap-2">
-        <img
+        {/* <img
           src={`/assets/icons/${
-            checkIsSaved(singularSaves || [], post.$id) ? "saved" : "save"
+            "saved"
+            // checkIsSaved(singularSaves || [], post.$id) ? "saved" : "save"
             // "saved"
           }.svg`}
           alt="save"
           width={20}
           height={20}
-          onClick={handleSavePost}
-          className={clsx(isSaveOperationInProgress || "cursor-pointer")}
-        />
+          // onClick={handleSavePost}
+          className={clsx(
+            // isSaveOperationInProgress || "cursor-pointer"
+            "cursor-pointer"
+          )}
+        /> */}
       </div>
     </div>
   );
